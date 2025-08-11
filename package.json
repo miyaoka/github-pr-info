@@ -1,0 +1,48 @@
+{
+  "name": "github-pr-info",
+  "version": "0.1.0",
+  "description": "Get GitHub PR information for current git branch",
+  "main": "src/index.ts",
+  "type": "module",
+  "bin": {
+    "github-pr-info": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "typecheck": "tsc",
+    "lint": "biome check",
+    "lint:fix": "biome check --fix",
+    "test": "bun test"
+  },
+  "keywords": [
+    "github",
+    "pr",
+    "pull-request",
+    "git",
+    "cli",
+    "starship"
+  ],
+  "license": "MIT",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miyaoka/github-pr-info.git"
+  },
+  "bugs": {
+    "url": "https://github.com/miyaoka/github-pr-info/issues"
+  },
+  "homepage": "https://github.com/miyaoka/github-pr-info",
+  "devDependencies": {
+    "@biomejs/biome": "^2.1.4",
+    "@types/bun": "^1.2.20",
+    "@types/node": "^24.2.1",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "gunshi": "^0.26.3"
+  }
+}
