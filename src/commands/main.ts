@@ -1,13 +1,8 @@
-import { getGitInfo } from "./git";
-import { getPRInfo, type PRInfo } from "./pr";
-import { debug, setDebugMode } from "./utils/debug";
+import { getGitInfo } from "../git";
+import { getPRInfo, type PRInfo } from "../pr";
+import { debug, setDebugMode } from "../utils/debug";
 
-// CLIオプションの型定義
-export interface Options {
-  debugMode: boolean;
-}
-
-// PR情報を表示（フォーマット対応）
+// PR情報を表示
 function displayPRInfo(prInfo: PRInfo | null): void {
   if (prInfo === null) {
     console.log("[no PR]");
@@ -23,10 +18,10 @@ function displayPRInfo(prInfo: PRInfo | null): void {
   console.log(formatted);
 }
 
-// PR情報取得と表示のメインロジック
-export async function execute(options: Options): Promise<void> {
+// メインコマンドの実行処理
+export async function main(debugMode: boolean): Promise<void> {
   // デバッグモード設定
-  if (options.debugMode) {
+  if (debugMode) {
     setDebugMode(true);
   }
 
@@ -41,7 +36,7 @@ export async function execute(options: Options): Promise<void> {
     return;
   }
 
-  // PR情報を取得（no-cacheオプション対応は後で実装）
+  // PR情報を取得
   const prInfo = await getPRInfo(result.value);
 
   // 表示
