@@ -19,8 +19,22 @@ src/
 
 ## 技術仕様
 
-- ランタイム: Bun
+- ツール管理: mise（pnpm, bun, node）
+- パッケージマネージャ: pnpm
+- ランタイム、test: Bun
 - 言語: TypeScript
 - 依存: GitHub CLI (`gh`)
 - キャッシュ: ファイルベース（JSON）
 - ビルドツール: なし（Bun で直接実行）
+
+## 主要コマンド
+
+```sh
+# cli実行
+pnpm run dev
+
+# チェック
+pnpm run typecheck
+pnpm run lint --fix
+pnpm run test
+```

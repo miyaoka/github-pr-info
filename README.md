@@ -38,21 +38,49 @@ when = "git rev-parse --git-dir"
 
 ### キャッシュのクリア
 
-bunxのパッケージキャッシュをクリアして最新版を取得する場合：
+bunx のパッケージキャッシュをクリアして最新版を取得する場合：
 
 ```bash
 bunx github:miyaoka/github-pr-info update
 ```
 
-## 表示例
+### 表示例
 
 - PR あり: `#123 Fix critical bug`（#123 がクリック可能）
 - PR なし: `[no PR]`
 - gh コマンド未インストール: `[gh not installed]`
 
-## キャッシュ
+## 開発
 
-### ディレクトリ構造
+### インストール
+
+```sh
+# ツールインストール
+mise install
+
+# パッケージインストール
+pnpm install
+```
+
+### 主要コマンド
+
+```sh
+# cli実行
+pnpm run dev
+
+# チェック
+pnpm run typecheck
+pnpm run lint --fix
+pnpm run test
+```
+
+### デバッグ
+
+環境変数 `GITHUB_PR_INFO_DEBUG=1` を設定するか、-d オプションをつけると詳細なデバッグ情報が `/tmp/github_pr_info_debug.log` に出力されます。
+
+### キャッシュ
+
+#### ディレクトリ構造
 
 ```
 ~/.cache/github_pr_info/
@@ -62,7 +90,7 @@ bunx github:miyaoka/github-pr-info update
         └── {branch}.json # ブランチごとのPR情報
 ```
 
-### キャッシュ処理
+#### キャッシュ処理
 
 キャッシュは以下の場合に再取得されます：
 
@@ -70,17 +98,13 @@ bunx github:miyaoka/github-pr-info update
 - ブランチ切り替え時
 - キャッシュが 24 時間経過した時
 
-## デバッグ
-
-環境変数 `GITHUB_PR_INFO_DEBUG=1` を設定するか、-d オプションをつけると詳細なデバッグ情報が `/tmp/github_pr_info_debug.log` に出力されます。
-
-## ファイル構成
+### ファイル構成
 
 - `index.ts` - メインエントリポイント
-- `cli.ts` - CLI定義（gunshi）
+- `cli.ts` - CLI 定義（gunshi）
 - `commands/` - コマンド実装
   - `main.ts` - メインコマンド
-  - `update.ts` - updateサブコマンド
+  - `update.ts` - update サブコマンド
 - `git.ts` - Git 情報取得
 - `pr.ts` - GitHub PR 情報取得
 - `cache.ts` - キャッシュ管理
@@ -88,7 +112,7 @@ bunx github:miyaoka/github-pr-info update
   - `result.ts` - エラーハンドリング
   - `debug.ts` - デバッグ出力
 
-## アーキテクチャ
+#### アーキテクチャ
 
 ```mermaid
 graph TD
@@ -104,11 +128,11 @@ graph TD
     update --> bun[Bun PM Cache]
 ```
 
-### 処理フロー
+#### 処理フロー
 
-#### メインコマンド
+##### メインコマンド
 
-1. **index.ts** → **cli.ts**: CLI起動
+1. **index.ts** → **cli.ts**: CLI 起動
 2. **cli.ts** → **main.ts**: メインコマンド実行
 3. **main.ts** → **git.ts**: Git 情報取得（リポジトリルート、現在のブランチ）
 4. **main.ts** → **pr.ts**: PR 情報取得要求（GitInfo を渡す）
@@ -117,8 +141,8 @@ graph TD
 7. **pr.ts** → **main.ts**: PRInfo 返却
 8. **main.ts** → **表示**: ターミナルにハイパーリンク付きで出力
 
-#### updateサブコマンド
+##### update サブコマンド
 
-1. **index.ts** → **cli.ts**: CLI起動
-2. **cli.ts** → **update.ts**: updateサブコマンド実行
+1. **index.ts** → **cli.ts**: CLI 起動
+2. **cli.ts** → **update.ts**: update サブコマンド実行
 3. **update.ts** → **Bun PM Cache**: `bun pm cache rm`でキャッシュクリア
