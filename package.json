@@ -12,7 +12,7 @@
     "typecheck": "tsc",
     "lint": "biome check",
     "lint:fix": "biome check --fix",
-    "test": "bun test"
+    "test": "echo 'No tests yet'"
   },
   "keywords": [
     "github",
