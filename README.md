@@ -21,6 +21,8 @@
 
 ## 使用方法
 
+### 基本的な使用
+
 Starship の設定ファイル（`starship.toml`）に本 CLI を追加：
 
 ```toml
@@ -32,6 +34,14 @@ command_timeout = 1000
 [custom.github_pr]
 command = "bunx github:miyaoka/github-pr-info"
 when = "git rev-parse --git-dir"
+```
+
+### キャッシュのクリア
+
+bunxのパッケージキャッシュをクリアして最新版を取得する場合：
+
+```bash
+bunx github:miyaoka/github-pr-info update
 ```
 
 ## 表示例
@@ -67,6 +77,10 @@ when = "git rev-parse --git-dir"
 ## ファイル構成
 
 - `index.ts` - メインエントリポイント
+- `cli.ts` - CLI定義（gunshi）
+- `commands/` - コマンド実装
+  - `main.ts` - メインコマンド
+  - `update.ts` - updateサブコマンド
 - `git.ts` - Git 情報取得
 - `pr.ts` - GitHub PR 情報取得
 - `cache.ts` - キャッシュ管理
@@ -78,19 +92,33 @@ when = "git rev-parse --git-dir"
 
 ```mermaid
 graph TD
-    index[index.ts] --> git[git.ts]
-    index --> pr[pr.ts]
+    index[index.ts] --> cli[cli.ts]
+    cli --> main[commands/main.ts]
+    cli --> update[commands/update.ts]
+    main --> git[git.ts]
+    main --> pr[pr.ts]
     pr --> cache[cache.ts]
     cache --> fs[(ファイルシステム)]
     pr --> github[(GitHub API)]
-    index --> output[console.logで表示]
+    main --> output[console.logで表示]
+    update --> bun[Bun PM Cache]
 ```
 
 ### 処理フロー
 
-1. **index.ts** → **git.ts**: Git 情報取得（リポジトリルート、現在のブランチ）
-2. **index.ts** → **pr.ts**: PR 情報取得要求（GitInfo を渡す）
-3. **pr.ts** → **cache.ts**: `getCache(gitInfo)`でキャッシュ確認
-4. **pr.ts** → **GitHub API**: キャッシュがない場合、`gh pr view`で PR 情報取得してキャッシュ保存
-5. **pr.ts** → **index.ts**: PRInfo 返却
-6. **index.ts** → **表示**: ターミナルにハイパーリンク付きで出力
+#### メインコマンド
+
+1. **index.ts** → **cli.ts**: CLI起動
+2. **cli.ts** → **main.ts**: メインコマンド実行
+3. **main.ts** → **git.ts**: Git 情報取得（リポジトリルート、現在のブランチ）
+4. **main.ts** → **pr.ts**: PR 情報取得要求（GitInfo を渡す）
+5. **pr.ts** → **cache.ts**: `getCache(gitInfo)`でキャッシュ確認
+6. **pr.ts** → **GitHub API**: キャッシュがない場合、`gh pr view`で PR 情報取得してキャッシュ保存
+7. **pr.ts** → **main.ts**: PRInfo 返却
+8. **main.ts** → **表示**: ターミナルにハイパーリンク付きで出力
+
+#### updateサブコマンド
+
+1. **index.ts** → **cli.ts**: CLI起動
+2. **cli.ts** → **update.ts**: updateサブコマンド実行
+3. **update.ts** → **Bun PM Cache**: `bun pm cache rm`でキャッシュクリア
