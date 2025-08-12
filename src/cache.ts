@@ -14,6 +14,9 @@ import type { PRInfo } from "./pr";
 import { debug } from "./utils/debug";
 import { tryCatch } from "./utils/result";
 
+// キャッシュ結果の型
+export type CacheResult = { data: PRInfo | null } | null;
+
 // キャッシュの有効期限（24時間）
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -62,8 +65,9 @@ function hasValidCache(cacheFile: string): boolean {
 
 /**
  * キャッシュ取得
+ * @returns キャッシュ結果（ヒット時は{data: PRInfo|null}、ミス時はnull）
  */
-export function getCache(gitInfo: GitInfo): PRInfo | null {
+export function getCache(gitInfo: GitInfo): CacheResult {
   const { cacheDir, headFile, cacheFile } = getCachePaths(gitInfo);
 
   // ディレクトリ作成
@@ -99,7 +103,7 @@ export function getCache(gitInfo: GitInfo): PRInfo | null {
     return null;
   }
 
-  return parsed.value;
+  return { data: parsed.value };
 }
 
 /**

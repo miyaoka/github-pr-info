@@ -74,7 +74,7 @@ export async function getPRInfo(gitInfo: GitInfo): Promise<PRInfo | null> {
   const cached = getCache(gitInfo);
   if (cached) {
     debug(`Using cache for ${gitInfo.currentBranch}`);
-    return cached;
+    return cached.data;
   }
 
   // キャッシュがない場合は新規取得
