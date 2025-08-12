@@ -6,6 +6,10 @@ on:
 jobs:
   validation:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        command: [typecheck, lint, test]
 
     steps:
       - name: Checkout
@@ -34,11 +38,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Type check
-        run: pnpm typecheck
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Test
-        run: pnpm test
+      - name: Run ${{ matrix.command }}
+        run: pnpm ${{ matrix.command }}
