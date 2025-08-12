@@ -1,9 +1,10 @@
-import { cli, define } from "gunshi";
+import { type Args, type Command, cli, define } from "gunshi";
 import packageJson from "../package.json";
-import { execute } from "./core";
+import { main } from "./commands/main";
+import { update } from "./commands/update";
 
-// CLIコマンド定義
-const command = define({
+// メインコマンド定義
+const mainCommand = define({
   name: "github-pr-info",
   description: "Get GitHub PR information for current git branch",
   args: {
@@ -16,16 +17,27 @@ const command = define({
   },
   run: async (ctx) => {
     const { debug: debugMode } = ctx.values;
-
-    await execute({
-      debugMode,
-    });
+    await main(debugMode);
   },
 });
 
+// updateサブコマンド定義
+const updateCommand = define({
+  name: "update",
+  description: "Clear cache to get latest version",
+  run: async () => {
+    await update();
+  },
+});
+
+// サブコマンドマップ
+const subCommands = new Map<string, Command<Args>>();
+subCommands.set("update", updateCommand);
+
 // CLI実行
 export function runCLI(argv: string[]) {
-  cli(argv, command, {
+  cli(argv, mainCommand, {
     version: packageJson.version,
+    subCommands,
   });
 }
