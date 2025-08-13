@@ -17,8 +17,8 @@ import { tryCatch } from "./utils/result";
 // キャッシュ結果の型
 export type CacheResult = { data: PRInfo | null } | null;
 
-// キャッシュの有効期限（24時間）
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+// キャッシュの有効期限（1分）
+const CACHE_TTL_MS = 60 * 1000;
 
 // パス生成
 function getCachePaths(gitInfo: GitInfo) {
